@@ -22,8 +22,31 @@ class Board:
         return [piece for row in self.board for piece in row
                 if piece != 0 and piece.color == color]
 
+    def move(self, piece, row, col):
+        self.board[piece.row][piece.col] = 0
+        self.board[row][col] = piece
+        piece.move(row, col)
+
+        back_row = 0 if piece.color == RED else ROWS - 1
+        if row == back_row:
+            piece.make_king()
+            if piece.color == WHITE:
+                self.white_kings += 1
+            else:
+                self.red_kings += 1
+
     def get_piece(self, row, col):
         return self.board[row][col]
+
+    def remove(self, pieces):
+        for piece in pieces:
+            if self.board[piece.row][piece.col] == 0:
+                continue
+            self.board[piece.row][piece.col] = 0
+            if piece.color == RED:
+                self.red_left -= 1
+            else:
+                self.white_left -= 1
 
     def create_board(self):
         for row in range(ROWS):
