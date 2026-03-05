@@ -18,6 +18,9 @@ class Board:
                 pygame.draw.rect(window, CHECK1, (row * SQUARE_SIZE, col * SQUARE_SIZE,
                                                   SQUARE_SIZE, SQUARE_SIZE))
 
+    def evaluate(self):
+        return self.white_left - self.red_left + (self.white_kings - self.red_kings) * 0.5
+
     def get_all_pieces(self, color):
         return [piece for row in self.board for piece in row
                 if piece != 0 and piece.color == color]
