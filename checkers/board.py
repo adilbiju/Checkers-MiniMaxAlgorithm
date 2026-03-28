@@ -68,3 +68,29 @@ class Board:
             for piece in row:
                 if piece != 0:
                     piece.draw(window)
+
+    def _directions(self, piece):
+        row_step = -1 if piece.color == RED else 1
+        return [(row_step, -1), (row_step, 1)]
+
+    def get_all_valid_moves(self, color):
+        moves = {}
+        for piece in self.get_all_pieces(color):
+            piece_moves = {}
+            for dr, dc in self._directions(piece):
+                row, col = piece.row + dr, piece.col + dc
+                if 0 <= row < ROWS and 0 <= col < COLS and self.board[row][col] == 0:
+                    piece_moves[(row, col)] = []
+            if piece_moves:
+                moves[piece] = piece_moves
+        return moves
+
+    def get_valid_moves(self, piece):
+        return self.get_all_valid_moves(piece.color).get(piece, {})
+
+    def winner(self, turn=None):
+        if self.red_left <= 0:
+            return WHITE
+        if self.white_left <= 0:
+            return RED
+        return None
