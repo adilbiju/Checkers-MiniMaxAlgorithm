@@ -6,6 +6,11 @@ class Game:
         self._init()
         self.window = window
 
+    def update(self):
+        self.board.draw(self.window)
+        self.draw_valid_moves(self.valid_moves)
+        pygame.display.update()
+
     def _init(self):
         self.selected = None
         self.board = Board()
@@ -47,6 +52,11 @@ class Game:
             return False
         
         return True
+    
+    def draw_valid_moves(self,moves):
+        for move in moves:
+            row, col = move
+            pygame.draw.circle(self.window, BLUE, (col*SQUARE_SIZE + SQUARE_SIZE//2, row*SQUARE_SIZE + SQUARE_SIZE//2), 10)
     
     def change_turn(self):
         self.valid_moves = {}
