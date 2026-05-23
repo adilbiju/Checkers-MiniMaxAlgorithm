@@ -73,10 +73,25 @@ class Board:
         row_step = -1 if piece.color == RED else 1
         return [(row_step, -1), (row_step, 1)]
 
-    def get_all_valid_moves(self, color):
+    def _capture_moves(self, piece):
         moves = {}
-        for piece in self.get_all_pieces(color):
-            piece_moves = {}
+        for dr, dc in self._directions(piece):
+            middle_row, middle_col = piece.row + dr, piece.col + dc
+            row, col = piece.row + 2 * dr, piece.col + 2 * dc
+            if not (0 <= middle_row < ROWS and 0 <= middle_col < COLS
+                    and 0 <= row < ROWS and 0 <= col < COLS):
+                continue
+            middle = self.board[middle_row][middle_col]
+            if middle != 0 and middle.color != piece.color and self.board[row][col] == 0:
+                moves[(row, col)] = [middle]
+        return moves
+
+    def get_all_valid_moves(self, color):
+        pieces = self.get_all_pieces(color)
+        captures = {piece: self._capture_moves(piece) for piece in pieces}
+        moves = {}
+        for piece in pieces:
+            piece_moves = captures[piece].copy()
             for dr, dc in self._directions(piece):
                 row, col = piece.row + dr, piece.col + dc
                 if 0 <= row < ROWS and 0 <= col < COLS and self.board[row][col] == 0:
