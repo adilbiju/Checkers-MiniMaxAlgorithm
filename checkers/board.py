@@ -75,15 +75,39 @@ class Board:
 
     def _capture_moves(self, piece):
         moves = {}
-        for dr, dc in self._directions(piece):
-            middle_row, middle_col = piece.row + dr, piece.col + dc
-            row, col = piece.row + 2 * dr, piece.col + 2 * dc
-            if not (0 <= middle_row < ROWS and 0 <= middle_col < COLS
-                    and 0 <= row < ROWS and 0 <= col < COLS):
-                continue
-            middle = self.board[middle_row][middle_col]
-            if middle != 0 and middle.color != piece.color and self.board[row][col] == 0:
-                moves[(row, col)] = [middle]
+        origin = (piece.row, piece.col)
+
+        def occupant(row, col, current, captured):
+            if (row, col) == current:
+                return piece
+            if (row, col) == origin or any(
+                    taken.row == row and taken.col == col for taken in captured):
+                return 0
+            return self.board[row][col]
+
+        def search(row, col, captured):
+            continued = False
+            for dr, dc in self._directions(piece):
+                middle_row, middle_col = row + dr, col + dc
+                landing_row, landing_col = row + 2 * dr, col + 2 * dc
+                if not (0 <= middle_row < ROWS and 0 <= middle_col < COLS
+                        and 0 <= landing_row < ROWS and 0 <= landing_col < COLS):
+                    continue
+                middle = occupant(middle_row, middle_col, (row, col), captured)
+                if (middle == 0 or middle.color == piece.color
+                        or occupant(landing_row, landing_col, (row, col), captured) != 0):
+                    continue
+                continued = True
+                new_captured = captured + (middle,)
+                back_row = 0 if piece.color == RED else ROWS - 1
+                if not piece.king and landing_row == back_row:
+                    moves[(landing_row, landing_col)] = list(new_captured)
+                else:
+                    search(landing_row, landing_col, new_captured)
+            if not continued and captured:
+                moves[(row, col)] = list(captured)
+
+        search(piece.row, piece.col, ())
         return moves
 
     def get_all_valid_moves(self, color):
