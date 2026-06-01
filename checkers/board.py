@@ -70,8 +70,8 @@ class Board:
                     piece.draw(window)
 
     def _directions(self, piece):
-        row_step = -1 if piece.color == RED else 1
-        return [(row_step, -1), (row_step, 1)]
+        rows = (-1, 1) if piece.king else ((-1,) if piece.color == RED else (1,))
+        return [(dr, dc) for dr in rows for dc in (-1, 1)]
 
     def _capture_moves(self, piece):
         moves = {}
