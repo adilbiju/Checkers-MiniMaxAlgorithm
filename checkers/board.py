@@ -113,9 +113,12 @@ class Board:
     def get_all_valid_moves(self, color):
         pieces = self.get_all_pieces(color)
         captures = {piece: self._capture_moves(piece) for piece in pieces}
+        if any(captures.values()):
+            return {piece: moves for piece, moves in captures.items() if moves}
+
         moves = {}
         for piece in pieces:
-            piece_moves = captures[piece].copy()
+            piece_moves = {}
             for dr, dc in self._directions(piece):
                 row, col = piece.row + dr, piece.col + dc
                 if 0 <= row < ROWS and 0 <= col < COLS and self.board[row][col] == 0:
