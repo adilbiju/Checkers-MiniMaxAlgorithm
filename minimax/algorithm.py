@@ -4,7 +4,10 @@ from checkers.constant_vals import RED, WHITE
 
 def minimax(position, depth, max_player, game):
     turn = WHITE if max_player else RED
-    if depth == 0 or position.winner(turn) is not None:
+    winner = position.winner(turn)
+    if winner is not None:
+        return (float('inf') if winner == WHITE else float('-inf')), position
+    if depth == 0:
         return position.evaluate(), position
     
     if max_player:

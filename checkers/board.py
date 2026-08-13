@@ -135,4 +135,6 @@ class Board:
             return WHITE
         if self.white_left <= 0:
             return RED
+        if turn is not None and not self.get_all_valid_moves(turn):
+            return WHITE if turn == RED else RED
         return None
