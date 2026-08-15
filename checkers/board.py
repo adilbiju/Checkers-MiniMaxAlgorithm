@@ -31,7 +31,7 @@ class Board:
         piece.move(row, col)
 
         back_row = 0 if piece.color == RED else ROWS - 1
-        if row == back_row:
+        if row == back_row and not piece.king:
             piece.make_king()
             if piece.color == WHITE:
                 self.white_kings += 1
@@ -48,8 +48,12 @@ class Board:
             self.board[piece.row][piece.col] = 0
             if piece.color == RED:
                 self.red_left -= 1
+                if piece.king:
+                    self.red_kings -= 1
             else:
                 self.white_left -= 1
+                if piece.king:
+                    self.white_kings -= 1
 
     def create_board(self):
         for row in range(ROWS):
