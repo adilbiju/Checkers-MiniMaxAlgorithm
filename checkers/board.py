@@ -15,7 +15,7 @@ class Board:
         window.fill(CHECK2)
         for row in range(ROWS):
             for col in range(row % 2, COLS, 2):
-                pygame.draw.rect(window, CHECK1, (row * SQUARE_SIZE, col * SQUARE_SIZE,
+                pygame.draw.rect(window, CHECK1, (col * SQUARE_SIZE, row * SQUARE_SIZE,
                                                   SQUARE_SIZE, SQUARE_SIZE))
 
     def evaluate(self):
