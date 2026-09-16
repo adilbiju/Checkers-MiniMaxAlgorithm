@@ -49,6 +49,31 @@ class BoardLogicTests(unittest.TestCase):
         self.assertEqual(board.get_valid_moves(capturing), {(3, 4): [board.get_piece(4, 3)]})
         self.assertEqual(board.get_valid_moves(other), {})
 
+    def test_three_jump_capture_removes_all_pieces(self):
+        board = empty_board()
+        moving = add_piece(board, 7, 0, RED)
+        taken = [add_piece(board, 6, 1, WHITE),
+                 add_piece(board, 4, 3, WHITE),
+                 add_piece(board, 2, 5, WHITE)]
+        self.assertEqual(board.get_valid_moves(moving), {(1, 6): taken})
+        board.move(moving, 1, 6)
+        board.remove(taken)
+        self.assertEqual(board.white_left, 0)
+
+    def test_chain_can_land_on_top_row(self):
+        board = empty_board()
+        moving = add_piece(board, 4, 1, RED)
+        first = add_piece(board, 3, 2, WHITE)
+        second = add_piece(board, 1, 4, WHITE)
+        self.assertEqual(board.get_valid_moves(moving), {(0, 5): [first, second]})
+
+    def test_king_can_reverse_during_chain(self):
+        board = empty_board()
+        moving = add_piece(board, 4, 1, RED, king=True)
+        first = add_piece(board, 3, 2, WHITE)
+        second = add_piece(board, 3, 4, WHITE)
+        self.assertEqual(board.get_valid_moves(moving), {(4, 5): [first, second]})
+
 
 if __name__ == "__main__":
     unittest.main()
