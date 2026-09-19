@@ -74,6 +74,24 @@ class BoardLogicTests(unittest.TestCase):
         second = add_piece(board, 3, 4, WHITE)
         self.assertEqual(board.get_valid_moves(moving), {(4, 5): [first, second]})
 
+    def test_king_counts_remain_accurate(self):
+        board = empty_board()
+        moving = add_piece(board, 2, 1, RED, king=True)
+        board.move(moving, 1, 2)
+        board.move(moving, 0, 3)
+        self.assertEqual(board.red_kings, 1)
+        board.remove([moving])
+        self.assertEqual((board.red_left, board.red_kings), (0, 0))
+
+    def test_no_legal_moves_loses(self):
+        board = empty_board()
+        add_piece(board, 0, 1, RED)
+        add_piece(board, 7, 0, WHITE)
+        game = Game(None)
+        game.board = board
+        self.assertEqual(game.winner(), WHITE)
+        self.assertEqual(minimax(board, 2, False, game)[0], float("inf"))
+
 
 if __name__ == "__main__":
     unittest.main()
